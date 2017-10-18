@@ -16,37 +16,22 @@ import webapp2
 
 #Added a method parameter with value post
 form = """
-<form method = "get" action = "/testform">
-    <input type='text' name='q'>
-    <br>
-    <input type='password' name='r'>
+<form method = "post">
+    What is your birthday?
     <br>
     <label>
-        one
-        <input type = "radio" name="q" value="one">
+        Month
+        <input type = "text" name="month">
     </label>
     <label>
-        two
-        <input type = "radio" name="q" value="two">
+        Day
+        <input type = "text" name="day">
     </label>
     <label>
-        three
-        <input type = "radio" name="q" value="three">
-    </label>
-    <label>
-        four
-        <input type = "radio" name='q' value='four'>
-    </label>
-    <label>
-        five
-        <input type = "radio" name='q' value='five'>
+        Year
+        <input type = "text" name="year">
     </label>
     <br>
-    <select name='r'>
-        <option value='1'>One</option>
-        <option value='2'>Two</option>
-        <option value='3'>Three</option>
-    </select>
 	<br>
 	<input type = "submit">
 </form>"""
@@ -57,14 +42,39 @@ class MainPage(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'text/html'
         self.response.write(form)
 
-class TestHandeler(webapp2.RequestHandler):
-    def get(self):
-        q = self.request.get("q")
-        self.response.out.write(q)
-        #Below line of code is good for debugging
-        # self.response.headers['Content-Type'] = 'text/plain'
-        # self.response.write(self.request)
+    def post(self):
+        user_month = valid_month(self.request.get('month'))
+        user_day = valid_day(self.request.get('day'))
+        user_year = valid_year(self.request.get('year'))
 
-app = webapp2.WSGIApplication([
-    ('/', MainPage),('/testform',TestHandeler)
-], debug=True)
+        if user_day is None or user_year is None or user_month is None:
+            self.response.out.write(form)
+        else:
+            self.response.out.write("Thanks! That's a totally valid day!")
+
+app = webapp2.WSGIApplication([('/', MainPage)], debug=True)
+
+months = ['January','February','March','April','May','June','July','August','September','October','November','December']
+
+month_abbvs = dict((m[:3].lower(), m) for m in months)
+
+print(month_abbvs)
+
+def valid_month(month):
+    if month:
+        short_month = month[:3].lower()
+        return month_abbvs.get(short_month)
+
+def valid_day(day):
+    if day and day.isdigit():
+        day = int(day)
+        if day > 0 & day <= 31:
+            return str(day)
+
+def valid_year(year):
+    if year and year.isdigit():
+        year = int(year)
+        if year > 1900 & year < 2020:
+            return str(year)
+
+
