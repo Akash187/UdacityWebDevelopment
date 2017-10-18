@@ -14,18 +14,57 @@
 
 import webapp2
 
-form="""
-<form action = "http://www.google.com/search">
-	        <input name = "q" >
-	        <input type = "submit">
-	    </form>"""
+#Added a method parameter with value post
+form = """
+<form method = "get" action = "/testform">
+    <input type='text' name='q'>
+    <br>
+    <input type='password' name='r'>
+    <br>
+    <label>
+        one
+        <input type = "radio" name="q" value="one">
+    </label>
+    <label>
+        two
+        <input type = "radio" name="q" value="two">
+    </label>
+    <label>
+        three
+        <input type = "radio" name="q" value="three">
+    </label>
+    <label>
+        four
+        <input type = "radio" name='q' value='four'>
+    </label>
+    <label>
+        five
+        <input type = "radio" name='q' value='five'>
+    </label>
+    <br>
+    <select name='r'>
+        <option value='1'>One</option>
+        <option value='2'>Two</option>
+        <option value='3'>Three</option>
+    </select>
+	<br>
+	<input type = "submit">
+</form>"""
+
 
 class MainPage(webapp2.RequestHandler):
     def get(self):
         self.response.headers['Content-Type'] = 'text/html'
         self.response.write(form)
 
+class TestHandeler(webapp2.RequestHandler):
+    def get(self):
+        q = self.request.get("q")
+        self.response.out.write(q)
+        #Below line of code is good for debugging
+        # self.response.headers['Content-Type'] = 'text/plain'
+        # self.response.write(self.request)
 
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
+    ('/', MainPage),('/testform',TestHandeler)
 ], debug=True)
